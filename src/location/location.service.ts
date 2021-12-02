@@ -38,7 +38,7 @@ export class LocationService {
   }
 
   async findAvailableLocation() {
-    const availableLocation = await this.locationService.find({where: {isAvailable: true}})
+    const availableLocation = await this.locationService.find()
     if (!availableLocation) {
       throw new HttpException(' no available location', HttpStatus.NOT_FOUND)
     }
@@ -64,10 +64,10 @@ export class LocationService {
       throw new HttpException('there is no such location', HttpStatus.NOT_FOUND)
     }
     const currentActivity = locationById.activities
-    let b = []
+    let data = []
     for (let x of currentActivity){
-      b.push((x.day).toLocaleDateString())
+      data.push((x.day).toLocaleDateString())
     }
-    return b
+    return data
   }
 }

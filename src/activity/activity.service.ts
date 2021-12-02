@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { Location } from '../location/location.entity';
 import {LocationService} from "../location/location.service";
+import {DateDto} from "./dto/interval.dto";
 
 @Injectable()
 export class ActivityService {
@@ -53,8 +54,41 @@ export class ActivityService {
     }
     Object.assign(activity, dto)
     return await this.activityRepository.save(activity)
+  }
 
+  async findActivityDto(@Body('dto') dto: DateDto){
+    const start = [dto.start_date]
+    const end = [dto.end_date]
+    const dates = await this.enumerateDaysBetweenDates(start[0],end[0])
+    const data = await this.activityRepository.find()
+    const dataActivity = []
+    for (let x of data){
+      const day = ((x.day).toLocaleDateString())
+      const id = x.id
+      for (let i of dates){
+        if (i === day){
+          dataActivity.push(id)
+        }
+      }
+    }
+    const dats = []
+    for (let x of dataActivity){
+      const resData = await this.activityRepository.findOne({id: x})
+      console.log(resData)
+      dats.push(resData)
+    }
+    return dats
+  }
 
+  async enumerateDaysBetweenDates(start, end){
+    const arr = [];
+    const dt = new Date(start);
+    const ends = new Date(end);
+    while (dt <= ends) {
+      arr.push((new Date(dt)).toLocaleDateString());
+      dt.setDate(dt.getDate() + 1);
+    }
+    return arr
   }
 
 

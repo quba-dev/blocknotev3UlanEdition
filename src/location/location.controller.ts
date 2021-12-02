@@ -3,6 +3,7 @@ import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { Activity } from '../activity/activity.entity';
 
+
 @Controller('location')
 export class LocationController {
   constructor(private readonly locationService:LocationService) {}
@@ -24,10 +25,10 @@ export class LocationController {
   async availableLocation(){
     return this.locationService.findAvailableLocation()
   }
+
   @Get(':id')
   async findByLocation(@Param('id') id:number){
     return await this.locationService.findByLocation(id)
   }
-
 
 }
