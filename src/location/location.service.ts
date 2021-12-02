@@ -60,7 +60,6 @@ export class LocationService {
 
   async findByLocationAndTime(id: number) {
     const locationById = await this.locationService.findOne(id, {relations: ["activities"]})
-
     if (!locationById) {
       throw new HttpException('there is no such location', HttpStatus.NOT_FOUND)
     }
@@ -69,8 +68,6 @@ export class LocationService {
     for (let x of currentActivity){
       b.push((x.day).toLocaleDateString())
     }
-    console.log(b)
     return b
-
   }
 }
