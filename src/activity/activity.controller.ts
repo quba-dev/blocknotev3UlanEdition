@@ -11,7 +11,7 @@ export class ActivityController {
 
   @Post()
   createActivity(currentLocation:Location,@Body()dto:CreateActivityDto){
-    return this.activityService.createActivity(currentLocation,dto)
+    return this.activityService.createActivity(dto)
   }
   @Delete(':id')
   async deleteActivity(@Param('id') id:number){
@@ -26,6 +26,11 @@ export class ActivityController {
   @Get('activitydate')
   async availableActivity(@Body() dto:DateDto){
     return this.activityService.findActivityDto(dto)
+  }
+
+  @Get('findavailablelocation')
+  async findAvailableLocation(@Body() dto:DateDto){
+    return this.activityService.avalaibleLocationByDate(dto)
   }
 
 }

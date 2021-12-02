@@ -70,4 +70,14 @@ export class LocationService {
     }
     return data
   }
+
+  async findAll(){
+    const locationAll = await this.locationService.find()
+    return locationAll
+  }
+
+  async findWhiteLocation(id:number){
+    return await this.locationService.findOne(id)
+  }
+
 }

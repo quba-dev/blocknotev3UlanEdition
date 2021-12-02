@@ -1,7 +1,7 @@
 import {Body, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './activity.entity';
-import { Repository } from 'typeorm';
+import {In, Repository} from 'typeorm';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { Location } from '../location/location.entity';
 import {LocationService} from "../location/location.service";
@@ -17,7 +17,7 @@ export class ActivityService {
   }
 
 
-  async createActivity(@Body('dto') currentLocation: Location, dto: CreateActivityDto) {
+  async createActivity(@Body('dto') dto: CreateActivityDto) {
     const hh = [dto.day]
     const ff = dto.location
     const gg=await this.locationService.findByLocationAndTime(ff)
@@ -72,6 +72,7 @@ export class ActivityService {
       }
     }
     const dats = []
+    // const activities = await this.activityRepository.findOne({where: {id: In(dataActivity)}});
     for (let x of dataActivity){
       const resData = await this.activityRepository.findOne({id: x})
       console.log(resData)
@@ -91,5 +92,37 @@ export class ActivityService {
     return arr
   }
 
+
+  async avalaibleLocationByDate(@Body() dto: DateDto){
+    const date = dto.start_date
+    const newDate = new Date(date).toLocaleDateString()
+    const allActivity = await this.activityRepository.find()
+    const dataLocation = []
+    const ola = await this.locationService.findAll()
+    for ( let i of ola){
+      dataLocation.push(i.id)
+    }
+
+    let dataDate = []
+    const blackList = []
+    for (let i of allActivity){
+      if ( newDate === (i.day).toLocaleDateString()){
+        for (let x of dataLocation){
+          if (i.location.id === x){
+            blackList.push(i.location.id)
+            dataDate.push(i)
+          }
+        }
+      }
+    }
+    let difference = dataLocation.filter(x => !blackList.includes(x)).concat(blackList.filter(x => !dataLocation.includes(x)));
+    const veryWhitelist = []
+    for ( let i of difference){
+      let x = await this.locationService.findWhiteLocation(i)
+      veryWhitelist.push(x)
+    }
+
+    return veryWhitelist
+  }
 
 }
